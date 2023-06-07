@@ -1,164 +1,111 @@
-import { tweetsData } from "./data.js";
-import { v4 as uuidv4 } from "https://jspm.dev/uuid";
+import { menuArray } from "./data.js";
 
-document.addEventListener("click", function (e) {
-  if (e.target.dataset.like) {
-    handleLikeClick(e.target.dataset.like);
-  } else if (e.target.dataset.retweet) {
-    handleRetweetClick(e.target.dataset.retweet);
-  } else if (e.target.dataset.reply) {
-    handleReplyClick(e.target.dataset.reply);
-  } else if (e.target.id === "tweet-btn") {
-    handleTweetBtnClick();
-  } else if (e.target.dataset.delete) {
-    handleDelete(e.target.dataset.delete);
+const mainsection = document.getElementById("main-section");
+const orderlayout = document.getElementById("order-layout");
+let totalPrice = document.getElementById("total-price");
+const orderDetails = document.getElementById("order");
+
+document.addEventListener("click", (e) => {
+  if (e.target.dataset.add) {
+    handleAddItem(Number(e.target.dataset.add));
+  } else if (e.target.dataset.remove) {
+    handleRemoveItem(Number(e.target.dataset.remove));
   }
 });
+let orderedItems = [];
 
-function handleLikeClick(tweetId) {
-  const targetTweetObj = storedData.filter(function (tweet) {
-    return tweet.uuid === tweetId;
-  })[0];
-
-  if (targetTweetObj.isLiked) {
-    targetTweetObj.likes--;
-  } else {
-    targetTweetObj.likes++;
-  }
-  targetTweetObj.isLiked = !targetTweetObj.isLiked;
-  render();
+function handleRemoveItem(id) {
+  orderedItems.forEach((item, i) => {
+    if (id === item.id) {
+      orderedItems.splice(i, 1);
+    }
+  });
+  localStorage.setItem("orderData", JSON.stringify(orderedItems));
+  renderItems();
+  calculateTotal();
 }
 
-function handleRetweetClick(tweetId) {
-  const targetTweetObj = storedData.filter(function (tweet) {
-    return tweet.uuid === tweetId;
-  })[0];
-
-  if (targetTweetObj.isRetweeted) {
-    targetTweetObj.retweets--;
-  } else {
-    targetTweetObj.retweets++;
-  }
-  targetTweetObj.isRetweeted = !targetTweetObj.isRetweeted;
-  render();
+function handleAddItem(id) {
+  menuArray.forEach((item) => {
+    if (item.id === id) {
+      orderedItems.push(item);
+    }
+  });
+  localStorage.setItem("orderData", JSON.stringify(orderedItems));
+  renderItems();
+  calculateTotal();
 }
 
-function handleReplyClick(replyId) {
-  document.getElementById(`replies-${replyId}`).classList.toggle("hidden");
+function calculateTotal() {
+  let storedData = JSON.parse(localStorage.getItem("orderData"));
+  let value =
+    orderedItems && storedData.reduce((acc, obj) => acc + obj.price, 0);
+  totalPrice.innerText = value.toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+  });
+  value < 1 && orderDetails.classList.add("hide");
+  value > 0 && orderDetails.classList.remove("hide");
 }
 
-function handleTweetBtnClick() {
-  const tweetInput = document.getElementById("tweet-input");
+function renderItems() {
+  let storedData = JSON.parse(localStorage.getItem("orderData"));
 
-  if (tweetInput.value) {
-    storedData.unshift({
-      handle: `@Scrimba`,
-      profilePic: `images/scrimbalogo.png`,
-      likes: 0,
-      retweets: 0,
-      tweetText: tweetInput.value,
-      replies: [],
-      isLiked: false,
-      isRetweeted: false,
-      uuid: uuidv4(),
+  let itemsOrdered = ``;
+  if (orderedItems) {
+    storedData.forEach((item) => {
+      itemsOrdered += `
+          <section class="order-details">
+          <div class="item-list">
+            <p>${item.name}</p>
+            <button class="remove-btn" data-remove=${Number(
+              item.id
+            )}>remove</button>
+          </div>
+          <p>${item.price.toLocaleString("en-US", {
+            style: "currency",
+            currency: "USD",
+          })}</p>
+        </section>`;
     });
-
-    render();
-    tweetInput.value = "";
   }
+  orderlayout.innerHTML = itemsOrdered;
+  render();
 }
 
-localStorage.setItem("data", JSON.stringify(tweetsData));
-
-function handleDelete(tweetId) {
-  storedData.forEach((data, i) => {
-    if (data.uuid === tweetId) {
-      storedData.splice(i, 1);
-    }
-  });
-
-  document.getElementById("feed").innerHTML = getFeedHtml(storedData);
-}
-
-function getFeedHtml(tweetsD) {
+function getFeedHtml() {
   let feedHtml = ``;
-
-  tweetsD.forEach(function (tweet) {
-    let likeIconClass = "";
-
-    if (tweet.isLiked) {
-      likeIconClass = "liked";
-    }
-
-    let retweetIconClass = "";
-
-    if (tweet.isRetweeted) {
-      retweetIconClass = "retweeted";
-    }
-
-    let repliesHtml = "";
-
-    if (tweet.replies.length > 0) {
-      tweet.replies.forEach(function (reply) {
-        repliesHtml += `
-<div class="tweet-reply">
-    <div class="tweet-inner">
-        <img src="${reply.profilePic}" class="profile-pic">
-            <div>
-                <p class="handle">${reply.handle}</p>
-                <p class="tweet-text">${reply.tweetText}</p>
-            </div>
-        </div>
-</div>
-`;
-      });
-    }
-
+  menuArray.forEach((item) => {
     feedHtml += `
-<div class="tweet">
-    <div class="tweet-inner">
-        <img src="${tweet.profilePic}" class="profile-pic">
-
-        <div>
-        <div class="tweet-headers">
-            <p class="handle">${tweet.handle}</p>
-            <i class="fa-solid fa-trash delete" data-delete="${tweet.uuid}"></i>
-        </div>
-            <p class="tweet-text">${tweet.tweetText}</p>
-            <div class="tweet-details">
-                <span class="tweet-detail">
-                    <i class="fa-regular fa-comment-dots"
-                    data-reply="${tweet.uuid}"
-                    ></i>
-                    ${tweet.replies.length}
-                </span>
-                <span class="tweet-detail">
-                    <i class="fa-solid fa-heart ${likeIconClass}"
-                    data-like="${tweet.uuid}"
-                    ></i>
-                    ${tweet.likes}
-                </span>
-                <span class="tweet-detail">
-                    <i class="fa-solid fa-retweet ${retweetIconClass}"
-                    data-retweet="${tweet.uuid}"
-                    ></i>
-                    ${tweet.retweets}
-                </span>
-            </div>
-        </div>
-    </div>
-    <div class="hidden" id="replies-${tweet.uuid}">
-        ${repliesHtml}
-    </div>
-</div>
-`;
+    <section class="item" >
+    <section class="sub-item">
+      <img id="image" class="image" src="${item.img}"/>
+      <section class="sub-item-details">
+        <section>
+          <p class="item-name">${item.name}</p>
+          <p id="ingredients" class="ingredients">
+            ${item.ingredients}
+          </p>
+        </section>
+        <p id="price" class="price">${item.price.toLocaleString("en-US", {
+          style: "currency",
+          currency: "USD",
+        })}</p>
+      </section>
+    </section>
+    <button id="class-btn" class="add-btn" data-add=${Number(
+      item.id
+    )}>+</button>
+  </section>
+  <hr />
+    `;
   });
+
   return feedHtml;
 }
 
-const storedData = JSON.parse(localStorage.getItem("data"));
 function render() {
-  document.getElementById("feed").innerHTML = getFeedHtml(storedData);
+  mainsection.innerHTML = getFeedHtml();
 }
 
 render();

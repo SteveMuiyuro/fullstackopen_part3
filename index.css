@@ -1,145 +1,139 @@
-html,
+@import url("https://fonts.googleapis.com/css2?family=Poppins&family=Smythe&display=swap");
+
 body {
   margin: 0;
   padding: 0;
-  font-family: "Roboto", sans-serif;
+  box-sizing: border-box;
+  display: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f5f5f4;
+  font-family: "Smythe", cursive;
+  color: #f5f5f5;
 }
 
-/* typography and icons */
-
-h1 {
-  color: #0f8cdf;
-  margin-bottom: 10px;
-  font-size: 20px;
-}
-
-i {
-  font-size: 15px;
-  cursor: pointer;
-}
-
-.fa-solid {
-  color: #999;
-}
-
-.delete {
-  margin-top: 0;
-}
-
-.liked {
-  color: red;
-}
-
-.retweeted {
-  color: limegreen;
-}
-
-/* layout */
-
-main,
-header {
-  width: 290px;
-  margin: 0 auto;
+.container {
+  width: 20%;
+  height: auto;
+  background-color: #0f172a;
+  border-radius: 5px;
 }
 
 header {
-  padding-bottom: 25px;
-}
-
-.tweet-input-area {
+  background-image: url("assets/Header-photo.jpg");
+  border-radius: 5px 5px 0 0;
+  background-size: cover;
+  height: 30%;
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 2rem;
 }
 
-/* textareas + btn */
-
-textarea {
-  border: none;
-  resize: none;
-  padding: 10px;
-  margin: 0 0 20px 0;
-  height: 60px;
-  width: 100%;
-  font-size: 20px;
-  line-height: 30px;
+.title {
+  padding: 20px;
+}
+.main-section {
+  padding: 20px;
 }
 
-button {
-  background-color: #1da1f2;
-  border: none;
-  color: white;
-  padding: 10px 19px;
-  border-radius: 20px;
-  width: 100%;
-  cursor: pointer;
-  font-size: 20px;
-  font-weight: 600;
+.image {
+  width: 70px;
+  height: 70px;
 }
 
-/* tweet */
-
-.tweet {
-  border-top: 1px solid lightgray;
-  padding: 20px 0 0 0;
-  width: 100%;
-  margin: 15px 0;
-}
-
-.tweet-inner {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-}
-
-.tweet-headers {
+.item {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+
   align-items: center;
 }
 
-.tweet-details {
+.sub-item {
   display: flex;
-  font-size: 13px;
   justify-content: space-between;
-  width: 160px;
+  gap: 20px;
 }
 
-.tweet-detail {
+.sub-item-details {
   display: flex;
-  gap: 4px;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: start;
 }
 
-.tweet-reply {
-  border-top: 1px solid lightgray;
-  padding: 20px 0 0 0px;
-  margin: 10px 0 10px 40px;
-  width: 80%;
+p {
+  margin: 0;
+}
+.ingredients {
+  display: flex;
+  flex-wrap: wrap;
 }
 
-.handle {
-  font-size: 12px;
-  font-weight: 500;
-  color: #555;
-  margin-top: 0;
-}
-
-.tweet-text {
-  width: 207px;
-  font-size: 14px;
-  line-height: 20px;
-}
-
-/* images */
-
-.profile-pic {
-  border: 1px solid lightgray;
+.add-btn {
   border-radius: 50%;
-  width: 48px;
+  outline: none;
+  border: none;
+  height: 25px;
+  width: 25px;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+hr {
+  margin-top: 20px;
 }
 
-/* utility */
-.hidden {
+.order {
+  padding: 20px;
+  text-align: center;
+  /* display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center; */
+}
+
+.order-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.item-list {
+  display: flex;
+}
+
+.remove-btn {
+  background-color: transparent;
+  color: #8a8a84;
+  font-style: italic;
+  border: none;
+  outline: none;
+  text-align: center;
+  cursor: pointer;
+}
+.totals {
+  display: flex;
+  justify-content: space-between;
+}
+
+.complete-order-btn {
+  background-color: #16db99;
+  width: 100%;
+  margin-top: 20px;
+  height: 2.5rem;
+  color: #f5f5f4;
+  border: none;
+  outline: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.5ms ease-in;
+}
+
+.complete-order-btn:hover {
+  background-color: #25c28e;
+}
+
+.hide {
   display: none;
 }

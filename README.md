@@ -1,12 +1,7 @@
-## Project Twimba
+# Restaurant_Menu
 
-This is a simple project that illustrates the logic behind some of thetwitter features namely:
+This project is a simple order to payment project that demonstrates indepth understanding of the following subjects:
 
-```
-- Tweet Post
-- Retweet
-- Reply and show reply
-- Like
-- Delete
+- Array Objects
 
-```
+* Array Methods ( Map, filter & Reduce)
