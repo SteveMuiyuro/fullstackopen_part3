@@ -14,7 +14,7 @@ const menuArray = [
     id: 1,
   },
   {
-    name: "chicken",
+    name: "Chicken",
     ingredients: ["garlic, cream, chicken, chilli"],
     price: 12,
     img: "assets/chicken-img.png",

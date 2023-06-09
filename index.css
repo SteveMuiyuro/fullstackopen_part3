@@ -15,9 +15,10 @@ body {
 
 .container {
   width: 20%;
-  height: auto;
+  height: 85vh;
   background-color: #0f172a;
   border-radius: 5px;
+  position: relative;
 }
 
 header {
@@ -33,6 +34,7 @@ header {
 
 .title {
   padding: 20px;
+  font-weight: bold;
 }
 .main-section {
   padding: 20px;
@@ -46,7 +48,6 @@ header {
 .item {
   display: flex;
   justify-content: space-between;
-
   align-items: center;
 }
 
@@ -136,4 +137,88 @@ hr {
 
 .hide {
   display: none;
+}
+
+.payment-modal {
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 40%;
+  width: 80%;
+  background: #1e293b;
+  border-radius: 3px;
+  padding: 20px;
+  filter: drop-shadow(5.18654px 5.18654px 255.437px rgba(0, 0, 0, 0.5));
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  display: none;
+}
+
+.form-details {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+input,
+.pay-btn {
+  height: 2.5rem;
+  outline: none;
+  border: none;
+  border-radius: 2px;
+  text-indent: 5px;
+}
+
+.pay-btn {
+  background-color: #16db99;
+  color: #f5f5f5;
+  /* margin-top: 25px; */
+}
+
+.pay-btn:hover {
+  background-color: #25c28e;
+}
+
+.payment-title {
+  text-align: center;
+  font-weight: bold;
+  /* margin-bottom: 10px;
+  margin-top: 10px; */
+}
+
+/* .hide {
+  display: none;
+}
+
+.show {
+  display: flex;
+} */
+
+.fa-solid {
+  color: #f5f5f5;
+  background-color: transparent;
+  position: absolute;
+  top: 15px;
+  right: 20px;
+}
+
+.confirmation-msg {
+  margin-top: 20px;
+  background-color: #374151;
+  width: 90%;
+  height: 5rem;
+  display: none;
+  color: #f5f5f5;
+  margin-bottom: 50px;
+  margin: 0 auto;
+  border-radius: 3px;
+}
+
+.message-display {
+  padding-left: 50px;
+  padding-top: 30px;
 }

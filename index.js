@@ -4,7 +4,14 @@ const mainsection = document.getElementById("main-section");
 const orderlayout = document.getElementById("order-layout");
 let totalPrice = document.getElementById("total-price");
 const orderDetails = document.getElementById("order");
-
+const paymentBtn = document.getElementById("pay-btn");
+const paymentModal = document.getElementById("payment-modal");
+const closeButton = document.getElementById("close-btn");
+const completeOrder = document.getElementById("complete-order-btn");
+const inputNameValue = document.getElementById("name");
+const confirmationMsg = document.getElementById("confirmation-msg");
+const messageDisplay = document.getElementById("message-display");
+const removeButton = document.querySelectorAll("remove-btn");
 document.addEventListener("click", (e) => {
   if (e.target.dataset.add) {
     handleAddItem(Number(e.target.dataset.add));
@@ -12,8 +19,28 @@ document.addEventListener("click", (e) => {
     handleRemoveItem(Number(e.target.dataset.remove));
   }
 });
-let orderedItems = [];
 
+completeOrder.addEventListener("click", () => {
+  paymentModal.style.display = "flex";
+  completeOrder.disabled = true;
+  removeButton.disabled = true;
+});
+
+closeButton.addEventListener("click", () => {
+  paymentModal.style.display = "none";
+});
+
+paymentBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+  let value = inputNameValue.value;
+  paymentModal.style.display = "none";
+  confirmationMsg.style.display = "flex";
+  orderDetails.style.display = "none";
+  messageDisplay.innerText = `Thanks, ${value}! your order is on its way`;
+  confirmationMsg.append(paragraph);
+});
+
+let orderedItems = [];
 function handleRemoveItem(id) {
   orderedItems.forEach((item, i) => {
     if (id === item.id) {
@@ -25,6 +52,7 @@ function handleRemoveItem(id) {
   calculateTotal();
 }
 
+orderedItems.length < 1 && orderDetails.classList.add("hide");
 function handleAddItem(id) {
   menuArray.forEach((item) => {
     if (item.id === id) {
