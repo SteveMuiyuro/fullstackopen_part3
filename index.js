@@ -20,10 +20,8 @@ document.addEventListener("click", (e) => {
   }
 });
 
-completeOrder.addEventListener("click", () => {
+completeOrder.addEventListener("click", (e) => {
   paymentModal.style.display = "flex";
-  completeOrder.disabled = true;
-  removeButton.disabled = true;
 });
 
 closeButton.addEventListener("click", () => {
