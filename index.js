@@ -1,137 +1,84 @@
-import { menuArray } from "./data.js";
+const express = require("express");
+const app = express();
+var responseTime = require("response-time");
+app.use(express.json());
 
-const mainsection = document.getElementById("main-section");
-const orderlayout = document.getElementById("order-layout");
-let totalPrice = document.getElementById("total-price");
-const orderDetails = document.getElementById("order");
-const paymentBtn = document.getElementById("pay-btn");
-const paymentModal = document.getElementById("payment-modal");
-const closeButton = document.getElementById("close-btn");
-const completeOrder = document.getElementById("complete-order-btn");
-const inputNameValue = document.getElementById("name");
-const confirmationMsg = document.getElementById("confirmation-msg");
-const messageDisplay = document.getElementById("message-display");
-const removeButton = document.querySelectorAll("remove-btn");
-document.addEventListener("click", (e) => {
-  if (e.target.dataset.add) {
-    handleAddItem(Number(e.target.dataset.add));
-  } else if (e.target.dataset.remove) {
-    handleRemoveItem(Number(e.target.dataset.remove));
+persons = [
+  {
+    id: 1,
+    name: "Arto Hellas",
+    number: "040-123456",
+  },
+  {
+    id: 2,
+    name: "Ada Lovelace",
+    number: "39-44-5323523",
+  },
+  {
+    id: 3,
+    name: "Dan Abramov",
+    number: "12-43-234345",
+  },
+  {
+    id: 4,
+    name: "Mary Poppendieck",
+    number: "39-23-6423122",
+  },
+];
+
+app.get("/api/persons", (req, res) => {
+  res.json(persons);
+});
+
+app.get("/info", (req, res) => {
+  const newDate = new Date();
+
+  res.send(
+    `Phone book has info for ${persons.length} people <P>${newDate}</P>`
+  );
+});
+
+app.get("/api/persons/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const person = persons.find((person) => person.id === id);
+  if (person) {
+    res.json(person);
+  } else {
+    res.status(404).end();
   }
 });
 
-completeOrder.addEventListener("click", (e) => {
-  paymentModal.style.display = "flex";
+app.delete("/api/persons/:id", (req, res) => {
+  const id = Number(req.params.id);
+  persons = persons.filter((person) => person.id !== id);
+  res.status(204).end();
 });
 
-closeButton.addEventListener("click", () => {
-  paymentModal.style.display = "none";
-});
+app.post("/api/persons", (req, res) => {
+  function generateId() {
+    const maxid =
+      persons.length > 0 ? Math.max(...persons.map((person) => person.id)) : 0;
+    return maxid + 1;
+  }
+  const body = req.body;
+  const person = { id: generateId(), name: body.name, number: body.number };
+  persons = persons.concat(person);
 
-paymentBtn.addEventListener("click", (e) => {
-  e.preventDefault();
-  let value = inputNameValue.value;
-  paymentModal.style.display = "none";
-  confirmationMsg.style.display = "flex";
-  orderDetails.style.display = "none";
-  messageDisplay.innerText = `Thanks, ${value}! your order is on its way`;
-  confirmationMsg.append(paragraph);
-});
-
-let orderedItems = [];
-function handleRemoveItem(id) {
-  orderedItems.forEach((item, i) => {
-    if (id === item.id) {
-      orderedItems.splice(i, 1);
-    }
-  });
-  localStorage.setItem("orderData", JSON.stringify(orderedItems));
-  renderItems();
-  calculateTotal();
-}
-
-orderedItems.length < 1 && orderDetails.classList.add("hide");
-function handleAddItem(id) {
-  menuArray.forEach((item) => {
-    if (item.id === id) {
-      orderedItems.push(item);
-    }
-  });
-  localStorage.setItem("orderData", JSON.stringify(orderedItems));
-  renderItems();
-  calculateTotal();
-}
-
-function calculateTotal() {
-  let storedData = JSON.parse(localStorage.getItem("orderData"));
-  let value =
-    orderedItems && storedData.reduce((acc, obj) => acc + obj.price, 0);
-  totalPrice.innerText = value.toLocaleString("en-US", {
-    style: "currency",
-    currency: "USD",
-  });
-  value < 1 && orderDetails.classList.add("hide");
-  value > 0 && orderDetails.classList.remove("hide");
-}
-
-function renderItems() {
-  let storedData = JSON.parse(localStorage.getItem("orderData"));
-
-  let itemsOrdered = ``;
-  if (orderedItems) {
-    storedData.forEach((item) => {
-      itemsOrdered += `
-          <section class="order-details">
-          <div class="item-list">
-            <p>${item.name}</p>
-            <button class="remove-btn" data-remove=${Number(
-              item.id
-            )}>remove</button>
-          </div>
-          <p>${item.price.toLocaleString("en-US", {
-            style: "currency",
-            currency: "USD",
-          })}</p>
-        </section>`;
+  if (!body.name || !body.number) {
+    return res.status(404).json({
+      error: "missing info.please ensure all the fileds are included",
     });
   }
-  orderlayout.innerHTML = itemsOrdered;
-  render();
-}
-
-function getFeedHtml() {
-  let feedHtml = ``;
-  menuArray.forEach((item) => {
-    feedHtml += `
-    <section class="item" >
-    <section class="sub-item">
-      <img id="image" class="image" src="${item.img}"/>
-      <section class="sub-item-details">
-        <section>
-          <p class="item-name">${item.name}</p>
-          <p id="ingredients" class="ingredients">
-            ${item.ingredients}
-          </p>
-        </section>
-        <p id="price" class="price">${item.price.toLocaleString("en-US", {
-          style: "currency",
-          currency: "USD",
-        })}</p>
-      </section>
-    </section>
-    <button id="class-btn" class="add-btn" data-add=${Number(
-      item.id
-    )}>+</button>
-  </section>
-  <hr />
-    `;
+  persons.forEach((person) => {
+    if (person.name === body.name) {
+      return res.status(404).json({
+        error: "name must be unique",
+      });
+    }
   });
+});
 
-  return feedHtml;
-}
-
-function render() {
-  mainsection.innerHTML = getFeedHtml();
-}
-
-render();
+const PORT = 3001;
+app.listen(PORT, () => {
+  console.log(`Listening to Port, ${PORT}`);
+});

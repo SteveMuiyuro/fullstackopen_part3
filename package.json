@@ -1,13 +1,24 @@
 {
-  "name": "project",
-  "dependencies": {},
-  "devDependencies": {
-    "vite": "latest"
-  },
+  "name": "fullstackopen_part3",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "start": "vite",
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SteveMuiyuro"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "response-time": "^2.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
   }
 }
