@@ -62,7 +62,6 @@ app.post("/api/persons", (req, res) => {
   }
   const body = req.body;
   const person = { id: generateId(), name: body.name, number: body.number };
-  persons = persons.concat(person);
 
   if (!body.name || !body.number) {
     return res.status(404).json({
@@ -70,12 +69,14 @@ app.post("/api/persons", (req, res) => {
     });
   }
   persons.forEach((person) => {
-    if (person.name === body.name) {
+    if (person.name === body.name && body.number === person.number) {
       return res.status(404).json({
-        error: "name must be unique",
+        error: "name and number must be unique",
       });
     }
   });
+  persons = persons.concat(person);
+  res.json(person);
 });
 
 const PORT = 3001;
