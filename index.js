@@ -10,7 +10,7 @@ app.use(express.static("build"));
 app.use(morgan("tiny"));
 app.use(cors());
 
-let persons = [
+persons = [
   {
     id: 1,
     name: "Arto Hellas",
