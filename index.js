@@ -5,9 +5,23 @@ const morgan = require("morgan");
 var responseTime = require("response-time");
 app.use(express.json());
 morgan.token("body", (req, res) => JSON.stringify(req.body));
-app.use(morgan(":method :url :status :response-time ms :body "));
+
+app.use(
+  morgan(function (tokens, req, res) {
+    return [
+      tokens.method(req, res),
+      tokens.url(req, res),
+      tokens.status(req, res),
+      tokens.res(req, res, "content-length"),
+      "-",
+      tokens["response-time"](req, res),
+      "ms",
+      tokens.body(req, res),
+    ].join(" ");
+  })
+);
+
 app.use(express.static("build"));
-app.use(morgan("tiny"));
 app.use(cors());
 
 persons = [
@@ -72,7 +86,7 @@ app.post("/api/persons", (req, res) => {
 
   if (!body.name || !body.number) {
     return res.status(404).json({
-      error: "missing info.please ensure all the fileds are included",
+      error: "missing info.please ensure all the fields are included",
     });
   }
   persons.forEach((person) => {
