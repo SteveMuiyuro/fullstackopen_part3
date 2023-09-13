@@ -16,7 +16,7 @@ primary_region = "jnb"
 
 
 [env]
-  PORT = "8080"
+  PORT = "3000"
 
 [experimental]
   auto_rollback = true
