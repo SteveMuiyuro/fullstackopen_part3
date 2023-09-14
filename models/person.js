@@ -2,9 +2,7 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 mongoose.set("strictQuery", false);
 
-const password = process.env.PASSWORD;
-
-const url = `mongodb+srv://stevemuiyuro:${password}@cluster0.w83kcyw.mongodb.net/?retryWrites=true&w=majority`;
+const url = process.env.MONGO_URL;
 
 console.log("connecting to", url);
 
@@ -18,8 +16,24 @@ mongoose
   });
 
 const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
+  name: {
+    type: String,
+    minLength: 3,
+    required: true,
+  },
+  number: {
+    type: String,
+    minLength: 8,
+    validate: {
+      validator: function (v) {
+        return /\d{2} || \d{3}-\d{8}/.test(v);
+      },
+      message: (props) =>
+        `${props.value} is not a valid phone number. Consider this format 01-123456 or 012-123456!`,
+    },
+
+    required: [true, `User phone number required`],
+  },
 });
 
 personSchema.set("toJSON", {

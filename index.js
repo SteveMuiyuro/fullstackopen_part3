@@ -1,11 +1,12 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
+app.use(express.static("build"));
+app.use(express.json());
+const morgan = require("morgan");
 const Person = require("./models/person.js");
 const cors = require("cors");
-const morgan = require("morgan");
 var responseTime = require("response-time");
-app.use(express.json());
 morgan.token("body", (req, res) => JSON.stringify(req.body));
 
 app.use(
@@ -22,8 +23,6 @@ app.use(
     ].join(" ");
   })
 );
-
-app.use(express.static("build"));
 app.use(cors());
 
 app.get("/api/persons", (req, res) => {
@@ -38,21 +37,31 @@ app.get("/api/persons", (req, res) => {
 //   );
 // });
 
-app.get("/api/persons/:id", (req, res) => {
-  Person.findById(req.params.id).then((person) => res.json(person));
+app.get("/api/persons/:id", (req, res, next) => {
+  Person.findById(req.params.id)
+    .then((person) => {
+      if (person) {
+        res.json(person);
+      } else {
+        res.status(404).end();
+      }
+    })
+    .catch((error) => next(error));
 });
 
-// app.delete("/api/persons/:id", (req, res) => {
-//   const id = Number(req.params.id);
-//   persons = persons.filter((person) => person.id !== id);
-//   res.status(204).end();
-// });
+app.delete("/api/persons/:id", (req, res, next) => {
+  Person.findByIdAndRemove(req.params.id)
+    .then((result) => {
+      res.status(204).end();
+    })
+    .catch((err) => next(err));
+});
 
-app.post("/api/persons", (req, res) => {
+app.post("/api/persons", (error, req, res, next) => {
   const body = req.body;
 
   if (!body.name || !body.number) {
-    return res.status(404).json({
+    return res.status(400).json({
       error: "missing info.please ensure all the fields are included",
     });
   }
@@ -61,9 +70,10 @@ app.post("/api/persons", (req, res) => {
     number: body.number,
   });
 
-  console.log(person);
-
-  person.save().then((savedPerson) => res.json(savedPerson));
+  person
+    .save()
+    .then((savedPerson) => res.json(savedPerson))
+    .catch((err) => next(error));
 
   // Person.forEach((person) => {
   //   if (person.name === body.name && body.number === person.number) {
@@ -72,6 +82,41 @@ app.post("/api/persons", (req, res) => {
   //     });
   //   }
 });
+
+app.put("/api/persons/:id", (req, res, next) => {
+  const { name, number } = req.body;
+
+  Person.findByIdAndUpdate(
+    req.params.id,
+    { name, number },
+    { new: true, runValidators: true, context: "query" }
+  )
+    .then((updatedPerson) => {
+      res.json(updatedPerson);
+    })
+    .catch((error) => next(error));
+});
+
+const unknownEndpoint = (req, res) => {
+  res.status(404).send({ error: "unknown endpoint" });
+};
+app.use(unknownEndpoint);
+
+const errorHandler = (error, req, res, next) => {
+  console.error(error.message);
+
+  if (error.name === "CastError") {
+    return res.status(400).send({ error: "malformatted id" });
+  } else if (error.name === "ValidationError") {
+    return res
+      .status(400)
+      .json({
+        message: `Person Validation failed: name: ${req.body.name} is shortre than the minimum allowed length (3)`,
+      });
+  }
+  next(error);
+};
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
